@@ -1,6 +1,6 @@
 import fileinput
 
-file = fileinput.input("./2-network-generation/directors.csv")
+file = fileinput.input("./directors.csv")
 line = file.readline()
 
 def get_dict_from_csv():

@@ -161,7 +161,8 @@ def is_feature_film(title_id):
         #duration example: PT2H7M
         duration = parse_duration(res.get('duration', ''))
     except:
-        genericErrorInfo()
+        # genericErrorInfo()
+        print("is_feature_film... defaulting to False")
         return False
     
     delta = timedelta(
@@ -174,6 +175,7 @@ def is_feature_film(title_id):
 
     if( delta.total_seconds() >= 70*60 ):
         #feature film must be at least 70 minutes long
+        print("is_feature_film... True")
         return True
 
     return False
