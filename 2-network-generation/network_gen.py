@@ -4,61 +4,48 @@ import collections
 import fileinput
 import json
 
-def extract_names(json_obj, names_set):
+def extract_names(json_obj, names_set, credits_dict):
     if isinstance(json_obj, dict):
         for key, value in json_obj.items():
             if key == 'name':
+                # keep track of the names
                 names_set.add(value)
+
+                # also access their respective credits
+                for k, v in json_obj.items():
+                    if k == 'credit':
+                        credits_dict[value].add(v)
             else:
-                extract_names(value, names_set)
+                extract_names(value, names_set, credits_dict)
     elif isinstance(json_obj, list):
         for item in json_obj:
-            extract_names(item, names_set)
+            extract_names(item, names_set, credits_dict)
 
 def process_jsonl(path):
     i = 0
     # this is a type of dictionary that has a default value of 1
     names_dict = collections.defaultdict(int)
+    credits_dict = collections.defaultdict(set)
     
     for line in fileinput.input(path):
         # load the data in json object
         data = json.loads(line)
-        # add all the new names to our running set
         names_set = set()
-        extract_names(data, names_set)
+        # add all the new names to our running set
+        extract_names(data, names_set, credits_dict)
         for item in names_set:
             names_dict[item] += 1
     
     # return the sorted dictionary for this director
-    return sorted(names_dict.items(), key=lambda x:x[1])
+    return sorted(names_dict.items(), key=lambda x:x[1]), credits_dict
 
-# for use with get_label_data
-def find_credit(name, data):
-    found_list = []
-    if isinstance(data, list):
-        for item in data:
-            found_list.extend(find_credit(name, item))
-    elif isinstance(data, dict):
-        if 'name' in data and data['name'] == name and 'credit' in data:
-            found_list.append(data['credit'])
-        for key, value in data.items():
-            found_list.extend(find_credit(name, value))
-    return found_list
-
-
-def get_label_data(name, path):
-    # print(name)
-    credits = collections.defaultdict(int)
-    for line in fileinput.input(path):
-        data = json.loads(line)
-        for credit in find_credit(name, data):
-            credits[credit] += 1
-    return credits
-
-
-def list_to_graph(G, names_list, director_name):
+def list_to_graph(G, names_list, director_name, credits_dict):
     for name, weight in names_list:
         G.add_edge(director_name, name, weight=weight)
+
+    for node in G.nodes():
+        G.add_node(node, attr_dict={"credit": list(credits_dict[node])})
+
     return G
 
 if __name__ == "__main__":
@@ -69,16 +56,13 @@ if __name__ == "__main__":
     film_directors_paths = sorted(find_file_paths())
     
     for path in film_directors_paths[:1]:
-        processed_data = process_jsonl(path)
+        processed_data, credits_dict = process_jsonl(path)
         director_name = path.split("/")[-1].replace("-", " ").replace(".jsonl", "")
-        list_to_graph(G, processed_data, director_name)
+        list_to_graph(G, processed_data, director_name, credits_dict)
+        print(processed_data)
     
-    attr_dict = {}
-    for source, target, data in G.edges(data=True):
-        # target is their name
-        # person_info = get_label_data(target, path).keys()
-        nx.set_node_attributes(G, {target:[key for key in get_label_data(target, path).keys()]}, 'credit')
-
+    for node in G.nodes():
+        print(node, "hi")
     
     for source, target, data in G.edges(data=True):
         print(f"{source} -> {target}, weight: {data['weight']}")
