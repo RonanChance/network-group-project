@@ -19,21 +19,23 @@ def find_role_names():
     file_paths = sorted(find_file_paths())
     gen_title_set = set()
 
+    # go through each file
     for file in file_paths:
         file = fileinput.input(file)
+        # go through each line in file
         for line in file:
             data = json.loads(line)
-
+            # go through each role in the credits
             for i in range(len(data["full_credits"])):
+                # grab the general title, add to set
                 gen_title = data["full_credits"][i]['role']
                 gen_title_set.add(gen_title)
-        
         file.close()
 
     return list(gen_title_set)
 
 
-# if __name__ == "__main__":
-#     gen_title_set = find_role_names()
-#     print(gen_title_set)
-#     print(len(gen_title_set))
+if __name__ == "__main__":
+    gen_title_set = find_role_names()
+    print(gen_title_set)
+    print(len(gen_title_set))
