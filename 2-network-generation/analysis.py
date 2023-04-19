@@ -1,6 +1,10 @@
 import pickle
 
+def pretty_print_dict(dict):
+    for key, value in dict.items():
+        print(key + ":", value, "\n")
+
 with open('./metadata/metadata.pkl', 'rb') as f:
     metadata = pickle.load(f)
 
-print(metadata['J.J. Abrams'])
+pretty_print_dict(metadata['J.J. Abrams'])

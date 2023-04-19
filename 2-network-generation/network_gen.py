@@ -19,6 +19,7 @@ def extract_info(data):
         
         for j in range(len(data["full_credits"][i]['crew'])):
             person = data["full_credits"][i]['crew'][j]['name']
+            # ADD ROLE CHECK HERE
             credits_dict[person].add(gen_title)
             names_set.add(person)
         
@@ -79,6 +80,10 @@ def extract_metadata(G, paths):
         metadata[key]["num_uniq_directors"] = len(set(val["directors"]))
         metadata[key]["num_uniq_movies"] = len(val["movies"])
         metadata[key]["num_uniq_roles"] = len(val["roles"])
+        # also replace sets with lists for ease of use, and sort them
+        metadata[key]["movies"] = sorted(list(val["movies"]))
+        metadata[key]["roles"] = sorted(list(val["roles"]))
+        metadata[key]["directors"] = sorted(val["directors"])
     
     filename = './metadata/metadata.pkl'
     with open(filename, 'wb') as f:
