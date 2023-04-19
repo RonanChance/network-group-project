@@ -1,33 +1,13 @@
-from filepaths_list import find_file_paths
+from find_info import find_file_paths, extract_info, extract_metadata
 import networkx as nx
-import collections
 import itertools
 import fileinput
 import argparse
-import pickle
 import json
-
-# Get names and information for every individual in json file
-# Returns a dictionary mapping of name and a set of roles the individual has worked
-# Also returns a set of all names seen in the json object
-def extract_info(data):
-    credits_dict = collections.defaultdict(set)
-    names_set = set()
-
-    for i in range(len(data["full_credits"])):
-        gen_title = data["full_credits"][i]['role']
-        
-        for j in range(len(data["full_credits"][i]['crew'])):
-            person = data["full_credits"][i]['crew'][j]['name']
-            # ADD ROLE CHECK HERE
-            credits_dict[person].add(gen_title)
-            names_set.add(person)
-        
-    return credits_dict, names_set
 
 # Given a json file and a graph, add nodes and edges to the graph (avoiding self-loops)
 # Returns the updated graph
-def process_jsonl(path, G):
+def jsonl_to_network(path, G):
     for line in fileinput.input(path):
         # load the data in json object
         data = json.loads(line)
@@ -58,37 +38,13 @@ def process_jsonl(path, G):
 
     return G
 
-def extract_metadata(G, paths):
-    metadata = {}
-
-    for path in paths:
-        for line in fileinput.input(path):
-            data = json.loads(line)
-            movie_title = data["title"]
-            single_credits_dict, single_names_set = extract_info(data)
-            director_list = [director['name'] for director in data["full_credits"][0]['crew']]
-
-            for name in single_names_set:
-                if name in metadata:
-                    metadata[name]["directors"].extend([n for n in director_list if n != name])
-                    metadata[name]["movies"].add(movie_title)
-                    metadata[name]["roles"].update(single_credits_dict[name])
-                else:
-                    metadata[name] = {"directors":[], "movies":set(), "roles":set()}
-
-    for key, val in metadata.items():
-        metadata[key]["num_uniq_directors"] = len(set(val["directors"]))
-        metadata[key]["num_uniq_movies"] = len(val["movies"])
-        metadata[key]["num_uniq_roles"] = len(val["roles"])
-        # also replace sets with lists for ease of use, and sort them
-        metadata[key]["movies"] = sorted(list(val["movies"]))
-        metadata[key]["roles"] = sorted(list(val["roles"]))
-        metadata[key]["directors"] = sorted(val["directors"])
-    
-    filename = './metadata/metadata.pkl'
-    with open(filename, 'wb') as f:
-        pickle.dump(metadata, f)
-    print("Wrote metadata file", filename)
+def add_metadata_to_network(G, metadata):
+    for name in metadata:
+        if G.has_node(name):
+            G.nodes[name]['num_uniq_directors'] = metadata[name]['num_uniq_directors']
+            G.nodes[name]['num_uniq_movies'] = metadata[name]['num_uniq_movies']
+            G.nodes[name]['num_uniq_roles'] = metadata[name]['num_uniq_roles']
+    return G
 
 
 if __name__ == "__main__":
@@ -110,13 +66,16 @@ if __name__ == "__main__":
     
     # for the first few directors, make our network
     for path in jsonl_paths[:num_directors]:
-        G = process_jsonl(path, G)
+        G = jsonl_to_network(path, G)
         # see from console how far we are through list
         print("Finished", path)
 
-    extract_metadata(G, jsonl_paths)
-    print("Finished metadata extraction")
+    metadata = extract_metadata(G, jsonl_paths[:num_directors])
+    print("Finished metadata extraction..")
+
+    G = add_metadata_to_network(G, metadata)
+    print("Added metadata to network..")
 
     gephi_filename = "./networks/network-"+str(num_directors)+".gexf"
     nx.write_gexf(G, gephi_filename)
-    print("Wrote gephi file", gephi_filename)
+    print("Wrote gephi file:", gephi_filename)
