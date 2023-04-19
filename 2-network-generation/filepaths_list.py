@@ -37,5 +37,10 @@ def find_role_names():
 
 if __name__ == "__main__":
     gen_title_set = find_role_names()
-    print(gen_title_set)
+    for item in gen_title_set:
+        print(item)
     print(len(gen_title_set))
+
+
+# maybe exclude "thanks"
+# combine "cast", "writing credits"
