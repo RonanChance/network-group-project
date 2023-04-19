@@ -75,8 +75,15 @@ def extract_metadata(G, paths):
                 else:
                     metadata[name] = {"directors":[], "movies":set(), "roles":set()}
 
-    with open('./metadata/metadata.pkl', 'wb') as f:
+    for key, val in metadata.items():
+        metadata[key]["num_uniq_directors"] = len(set(val["directors"]))
+        metadata[key]["num_uniq_movies"] = len(val["movies"])
+        metadata[key]["num_uniq_roles"] = len(val["roles"])
+    
+    filename = './metadata/metadata.pkl'
+    with open(filename, 'wb') as f:
         pickle.dump(metadata, f)
+    print("Wrote metadata file", filename)
 
 
 if __name__ == "__main__":
