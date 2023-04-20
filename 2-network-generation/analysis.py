@@ -8,6 +8,6 @@ if __name__ == "__main__":
     with open('./metadata/metadata-101.pkl', 'rb') as f:
         metadata = pickle.load(f)
 
-    person = "Robert Rodriguez"
+    person = "Gillian Flynn"
     print("Metadata for:", person, "\n")
     pretty_print_dict(metadata[person])

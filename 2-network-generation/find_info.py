@@ -68,12 +68,11 @@ def extract_metadata(G, paths):
             director_list = [director['name'] for director in data["full_credits"][0]['crew']]
 
             for name in single_names_set:
-                if name in metadata:
-                    metadata[name]["directors"].extend([n for n in director_list if n != name])
-                    metadata[name]["movies"].add(movie_title)
-                    metadata[name]["roles"].update(single_credits_dict[name])
-                else:
+                if name not in metadata:
                     metadata[name] = {"directors":[], "movies":set(), "roles":set()}
+                metadata[name]["directors"].extend([n for n in director_list if n != name])
+                metadata[name]["movies"].add(movie_title)
+                metadata[name]["roles"].update(single_credits_dict[name])
 
     for key, val in metadata.items():
         metadata[key]["num_uniq_directors"] = len(set(val["directors"]))
@@ -96,6 +95,12 @@ if __name__ == "__main__":
     for item in gen_title_set:
         print(item)
     print(len(gen_title_set))
+
+    print("\n")
+
+    for item in set([convert_names(item) for item in gen_title_set]):
+        print(item)
+    print(len(set([convert_names(item) for item in gen_title_set])))
 
 
 # maybe exclude "thanks"
