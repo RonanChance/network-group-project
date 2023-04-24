@@ -1,5 +1,6 @@
 from find_info import find_file_paths, extract_info, extract_metadata
 import networkx as nx
+import pandas as pd
 import itertools
 import fileinput
 import argparse
@@ -47,6 +48,38 @@ def add_metadata_to_network(G, metadata):
     return G
 
 
+def add_diversity_attr_to_network(G, path):
+    df = pd.read_csv(path, sep=',', header=0)
+
+    for _, row in df.iterrows():
+        # get Name, Sex, Ethnicity_Race, and Labels
+        name = row[1] + " " + row[0]
+        sex = row[2]
+        ethnicity = row[3]
+        labels = row[4]
+        imdb = row[5]#.split("/")[4] (not gonna split because seems convenient to have whole url)
+
+        if G.has_node(name):     
+            G.nodes[name]["sex"] = sex
+            G.nodes[name]["ethnicity"] = ethnicity 
+            G.nodes[name]["imdb"] = imdb
+
+            if type(labels) == str:
+                    if labels == "H":
+                        G.nodes[name]['renowned'] = True
+                    if labels == "Q":
+                        G.nodes[name]['queer'] = True
+                        
+            # in the event there are multiple labels (not in our dataset)
+            # for label in labels:
+                # if type(label) == str:
+                #     if label == "H":
+                #         G.nodes[name]['renowned'] = True
+                #     if label == "Q":
+                #         G.nodes[name]['queer'] = True
+    return G
+
+
 if __name__ == "__main__":
     # set up command line parsing
     parser = argparse.ArgumentParser(description='Example script with optional argument')
@@ -75,6 +108,9 @@ if __name__ == "__main__":
 
     G = add_metadata_to_network(G, metadata)
     print("Added metadata to network..")
+
+    G = add_diversity_attr_to_network(G, "../1-data-extraction/directors.csv")
+    print("Added diversity attributes to network..")
 
     gephi_filename = "./networks/network-"+str(num_directors)+".gexf"
     nx.write_gexf(G, gephi_filename)
