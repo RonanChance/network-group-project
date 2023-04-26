@@ -5,6 +5,8 @@ import itertools
 import fileinput
 import argparse
 import json
+import gzip
+import os
 
 # Given a json file and a graph, add nodes and edges to the graph (avoiding self-loops)
 # Returns the updated graph
@@ -130,8 +132,19 @@ if __name__ == "__main__":
     G = normalize_weights(G)
 
     gephi_filename = "./networks/network-"+str(num_directors)+".gexf"
+    gephi_filename_gz = "./networks/network-" + str(num_directors) + ".gexf.gz"
+
     nx.write_gexf(G, gephi_filename)
     print("Wrote gephi file:", gephi_filename)
+
+    with open(gephi_filename, 'rb') as f_in:
+        with gzip.open(gephi_filename_gz, 'wb') as f_out:
+            f_out.writelines(f_in)
+    print("Wrote compressed gephi file:", gephi_filename_gz)
+
+    os.remove(gephi_filename)
+    print("Deleted uncompressed file:", gephi_filename)
+
 
     sorted_homogeneity = sorted([(node, G.nodes[node]['homogeneity_param']) for node in G.nodes if 'director' in G.nodes[node]], key=lambda x: x[1], reverse=True)
     print(sorted_homogeneity)
