@@ -1,9 +1,9 @@
 import fileinput
 
-file = fileinput.input("./directors.csv")
-line = file.readline()
+def get_dict_from_csv(path):
+    file = fileinput.input(path)
+    line = file.readline()
 
-def get_dict_from_csv():
     director_to_id = {}
     id_to_director = {}
 

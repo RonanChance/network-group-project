@@ -26,7 +26,7 @@ if __name__ == "__main__":
         os.makedirs(film_directors_path)
 
     # get a dictionary that maps director names to their ID from custom python file
-    director_to_id = get_dict_from_csv()
+    director_to_id = get_dict_from_csv("directors.csv")
 
     i = 0
     for key, value in director_to_id.items():
