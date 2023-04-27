@@ -122,6 +122,21 @@ def normalize_weights(G):
                     norm_weight = G[node][neighbor]['weight'] / G.nodes[node]["num_uniq_movies"]
                     G[node][neighbor]['norm_weight'] = norm_weight
                     sum_total += norm_weight
-            G.nodes[node]["homogeneity_param"] = sum_total / num_crew           
+            G.nodes[node]["homogeneity_param"] = (sum_total / num_crew) * G.nodes[node]["num_uniq_movies"]   
                     
     return G
+
+
+# Tyler Perry
+# Peter Jackson
+# Clint Eastwood
+# David Yates
+# Christopher Nolan
+# Steven Soderberg
+# Steven Spielberg
+# Woody Allen
+# Barry Jenkins
+# Wes Anderson
+# Lilly Wachowski
+# J.J. Abrams
+# Michael Bay
