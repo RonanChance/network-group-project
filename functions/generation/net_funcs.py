@@ -7,26 +7,27 @@ import pandas as pd
 
 # Given a json file and a graph, add nodes and edges to the graph (avoiding self-loops)
 # Returns the updated graph
-def jsonl_to_network(path, G):
+def jsonl_to_network(path, G, exclusions):
     for line in fileinput.input(path):
         # load the data in json object
         data = json.loads(line)
-        single_credits_dict, single_names_set = extract_info(data)
+        single_credits_dict, single_names_set = extract_info(data, exclusions)
         
         # get each director name
         director_list = [director['name'] for director in data["full_credits"][0]['crew']]
         # print(director_list)
 
-        for name in director_list:
-            G.add_node(name, director=True)
+        for d in director_list:
+            if d not in G.nodes:
+                G.add_node(d, director=True)
             for crew in single_names_set:
                 # avoid duplicate increments
                 if crew in director_list:
                     continue
-                elif G.has_edge(name, crew):
-                    G[name][crew]['weight'] += 1
+                if G.has_edge(d, crew):
+                    G[d][crew]['weight'] += 1
                 else:
-                    G.add_edge(name, crew, weight=1)
+                    G.add_edge(d, crew, weight=1)
 
         # connect directors
         director_combinations = list(itertools.combinations(director_list, 2))
@@ -38,14 +39,14 @@ def jsonl_to_network(path, G):
 
     return G
 
-def extract_metadata(G, paths):
+def extract_metadata(G, paths, exclusions):
     metadata = {}
 
     for path in paths:
         for line in fileinput.input(path):
             data = json.loads(line)
             movie_title = data["title"]
-            single_credits_dict, single_names_set = extract_info(data)
+            single_credits_dict, single_names_set = extract_info(data, exclusions)
             director_list = [director['name'] for director in data["full_credits"][0]['crew']]
 
             for name in single_names_set:
@@ -56,9 +57,9 @@ def extract_metadata(G, paths):
                 metadata[name]["roles"].update(single_credits_dict[name])
 
     for key, val in metadata.items():
-        metadata[key]["num_uniq_directors"] = len(set(val["directors"]))
-        metadata[key]["num_uniq_movies"] = len(val["movies"])
-        metadata[key]["num_uniq_roles"] = len(val["roles"])
+        metadata[key]["num_directors"] = len(set(val["directors"]))
+        metadata[key]["num_movies"] = len(val["movies"])
+        metadata[key]["num_roles"] = len(val["roles"])
         # also replace sets with lists for ease of use, and sort them
         metadata[key]["movies"] = sorted(list(val["movies"]))
         metadata[key]["roles"] = sorted(list(val["roles"]))
@@ -81,25 +82,35 @@ def add_diversity_attr_to_network(G, path):
         ethnicity = row[3]
         labels = row[4]
         imdb = row[5]#.split("/")[4] (not gonna split because seems convenient to have whole url)
+        
+        # make custom label for research question
+        custom_label = sex + ethnicity
+        if type(labels) == str:
+            custom_label += labels
 
         if G.has_node(name):     
             G.nodes[name]["sex"] = sex
             G.nodes[name]["ethnicity"] = ethnicity 
             G.nodes[name]["imdb"] = imdb
+            G.nodes[name]["custlabel"] = custom_label
 
             if type(labels) == str:
                     if labels == "H":
                         G.nodes[name]['renowned'] = True
                     if labels == "Q":
                         G.nodes[name]['queer'] = True
+
+    for node in G.nodes:
+        if 'custlabel' not in G.nodes[node]:
+            G.nodes[node]['custlabel'] = 'NA'
     return G
 
 def add_metadata_to_network(G, metadata):
     for name in metadata:
         if G.has_node(name):
-            G.nodes[name]['num_uniq_directors'] = metadata[name]['num_uniq_directors']
-            G.nodes[name]['num_uniq_movies'] = metadata[name]['num_uniq_movies']
-            G.nodes[name]['num_uniq_roles'] = metadata[name]['num_uniq_roles']
+            G.nodes[name]['num_directors'] = metadata[name]['num_directors']
+            G.nodes[name]['num_movies'] = metadata[name]['num_movies']
+            G.nodes[name]['num_roles'] = metadata[name]['num_roles']
     return G
 
 def normalize_weights(G):
@@ -111,7 +122,7 @@ def normalize_weights(G):
             # also keep track of score so we can average it
             num_crew = sum(1 for neighbor in G.neighbors(node) if not G.nodes[neighbor].get('director'))
             if num_crew == 0:
-                G.nodes[node]["homogeneity_param"] = 0
+                G.nodes[node]["homogeneity"] = 0
                 continue
             
             sum_total = 0
@@ -119,11 +130,20 @@ def normalize_weights(G):
                 # dont update relationships between directors
                 if 'director' not in G.nodes[neighbor]:
                     # norm_weight = G[node][neighbor]['weight'] / num_crew
-                    norm_weight = G[node][neighbor]['weight'] / G.nodes[node]["num_uniq_movies"]
+                    norm_weight = G[node][neighbor]['weight'] / G.nodes[node]["num_movies"]
                     G[node][neighbor]['norm_weight'] = norm_weight
                     sum_total += norm_weight
-            G.nodes[node]["homogeneity_param"] = (sum_total / num_crew) * G.nodes[node]["num_uniq_movies"]   
+            G.nodes[node]["homogeneity"] = (sum_total / num_crew) * G.nodes[node]["num_movies"]   
                     
+    return G
+
+def remove_parsed_directors(G):
+    nodes_to_remove = []
+    for node in G.nodes:
+        if ('director' in G.nodes[node]) and (G.nodes[node].get('imdb') == None):
+            nodes_to_remove.append(node)
+    for node in nodes_to_remove:
+        G.remove_node(node)
     return G
 
 

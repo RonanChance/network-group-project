@@ -46,7 +46,7 @@ def find_role_names():
 # Get names and information for every individual in json file
 # Returns a dictionary mapping of name and a set of roles the individual has worked
 # Also returns a set of all names seen in the json object
-def extract_info(data):
+def extract_info(data, exclusions):
     credits_dict = collections.defaultdict(set)
     names_set = set()
 
@@ -56,7 +56,7 @@ def extract_info(data):
         for j in range(len(data["full_credits"][i]['crew'])):
             person = data["full_credits"][i]['crew'][j]['name']
             # check the role and convert to general title, return None if we want to skip
-            gen_role = convert_names(role)
+            gen_role = convert_names(role, exclusions)
             if gen_role != None:
                 credits_dict[person].add(gen_role)
                 names_set.add(person)

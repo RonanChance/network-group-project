@@ -1,5 +1,7 @@
-def convert_names(role):
-        
+def convert_names(role, exclusions):
+    if exclusions != None:
+        if role in exclusions:
+            return None
     if 'Casting' in role:
         return 'Casting'
     elif 'Writing' in role:
