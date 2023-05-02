@@ -51,10 +51,12 @@ def extract_metadata(G, paths, exclusions):
 
             for name in single_names_set:
                 if name not in metadata:
-                    metadata[name] = {"directors":[], "movies":set(), "roles":set()}
+                    # metadata[name] = {"directors":[], "movies":set(), "roles":set()}
+                    metadata[name] = {"directors":[], "movies":set(), "roles":[]}
                 metadata[name]["directors"].extend([n for n in director_list if n != name])
                 metadata[name]["movies"].add(movie_title)
-                metadata[name]["roles"].update(single_credits_dict[name])
+                # metadata[name]["roles"].update(single_credits_dict[name])
+                metadata[name]["roles"].extend([r for r in single_credits_dict[name]])
 
     for key, val in metadata.items():
         metadata[key]["num_directors"] = len(set(val["directors"]))
@@ -106,11 +108,22 @@ def add_diversity_attr_to_network(G, path):
     return G
 
 def add_metadata_to_network(G, metadata):
+    with open('./metadata/metadata-101.pkl', 'rb') as f:
+        # Load the object from the pickle file
+        pkinfo = pickle.load(f)
+
     for name in metadata:
         if G.has_node(name):
             G.nodes[name]['num_directors'] = metadata[name]['num_directors']
             G.nodes[name]['num_movies'] = metadata[name]['num_movies']
             G.nodes[name]['num_roles'] = metadata[name]['num_roles']
+            
+            # find the role that the individual does the most
+            roles_list = pkinfo[name]["roles"]
+            max_count = max(map(roles_list.count, roles_list))
+            max_items = {x for x in roles_list if roles_list.count(x) == max_count}
+            max_item = max_items.pop()
+            G.nodes[name]['role'] = max_item
     return G
 
 def normalize_weights(G):
