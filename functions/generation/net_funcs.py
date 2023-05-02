@@ -18,8 +18,13 @@ def jsonl_to_network(path, G, exclusions):
         # print(director_list)
 
         for d in director_list:
+            # label the director
             if d not in G.nodes:
                 G.add_node(d, director=True)
+            else:
+                G.nodes[d]['director'] = True
+            
+            # update the relationships
             for crew in single_names_set:
                 # avoid duplicate increments
                 if crew in director_list:
