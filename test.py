@@ -10,5 +10,7 @@ if __name__ == "__main__":
     G = normalize_weights(G)
     
     sorted_homogeneity = sorted([(node, G.nodes[node]['homogeneity_param']) for node in G.nodes if ('director' in G.nodes[node]) and (node in director_list)], key=lambda x: x[1], reverse=True)
-    print(sorted_homogeneity)
+    # print(sorted_homogeneity)
+
+
 

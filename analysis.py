@@ -1,30 +1,33 @@
-from functions.generation.find_info import find_file_paths
-import fileinput
-import os
-import json
-
-# get list of all movies across all jsonl files
-def find_movie_names():
-    file_paths = sorted(find_file_paths())
-    movie_names = []
-    total_num_uniq_movies = 0
-    # go through each file
-    for file in file_paths:
-        file = fileinput.input(file)
-        # go through each line in file
-        for line in file:
-            data = json.loads(line)
-            # grab the movie name and add it to final set
-            if data['title'] not in movie_names:
-                movie_names.append(data['title'])
-                # count the movie
-                total_num_uniq_movies += 1
-        file.close()
-
-    return list(movie_names), total_num_uniq_movies
+from functions.generation.find_info import find_file_paths, get_director_list
+from functions.generation.net_funcs import normalize_weights
+from functions.analysis import basic_stats
+import networkx as nx
+import pickle
 
 if __name__ == "__main__":
-    movie_names, total_num_movies = find_movie_names()
-    for movie in movie_names:
-        print(movie)
-    print(total_num_movies)
+    # with open('./metadata/metadata-101.pkl', 'rb') as f:
+    #     metadata = pickle.load(f)
+
+    # person = "J.J. Abrams"
+    # print("Metadata for:", person, "\n")
+
+    # basic_stats.pretty_print_dict(metadata[person])
+
+    # print("Getting movie list and number of movies...")
+    # movie_names, total_num_movies = basic_stats.find_movie_names()
+    # print(movie_names)
+    # print(total_num_movies)
+
+    # Read our current network G
+    G = nx.read_gexf('./networks/network-101.gexf.gz')
+    G = normalize_weights(G)
+
+    # Print role homogeneity values for every director
+    path_to_csv = "./directors.csv"
+    role_homogeneity_all_dirs_dict = basic_stats.get_role_homogeneity_dict(G, path_to_csv)
+    basic_stats.pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict)
+
+    # Print avg. role homogeneity value for every director
+    avg_role_homogeneity_dict = basic_stats.get_avg_role_homogeneity_dict(G,path_to_csv)
+    basic_stats.pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict)
+
