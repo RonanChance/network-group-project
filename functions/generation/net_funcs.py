@@ -1,4 +1,5 @@
 from .find_info import extract_info
+from ..analysis.basic_stats import get_total_opportunites
 import fileinput
 import json
 import pickle
@@ -162,6 +163,28 @@ def remove_parsed_directors(G):
             nodes_to_remove.append(node)
     for node in nodes_to_remove:
         G.remove_node(node)
+    return G
+
+def add_norm_weights_to_network(G):
+    dirs_role_count = get_total_opportunites(G)
+    # Get directors in graph
+    directors = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Normalize weights of each director
+    for director in directors:
+        # Get all crew under director
+        dir_crew = G.neighbors(director)
+        # Get the normalized weight of every crew member
+        for crew_mem in dir_crew:
+            # Get number of times crew member has worked with director
+            crew_og_weight = G.get_edge_data(director,crew_mem)['weight']
+            # Get crew member role
+            crew_role = G.nodes[crew_mem]['role']
+            # Get the total opportunities under that role
+            num_opportunities = dirs_role_count[director][crew_role]
+            # Calculate normalized weight
+            norm_weight = round(crew_og_weight/num_opportunities, 5)
+            # Add normalized weight to graph G
+            G[director][crew_mem]['norm_weight'] = norm_weight
     return G
 
 

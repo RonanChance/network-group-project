@@ -61,7 +61,9 @@ def get_average_degree_for_all_directors(G):
     dir_degrees = [G.degree(dir) for dir in dir_dict.keys()]
     # Get the average director degree
     dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
-    return "All Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4))
+    print("")
+    print("All Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
+    print("")
 
 def get_average_degree_for_minority_directors(G): 
     pass
@@ -69,9 +71,30 @@ def get_average_degree_for_minority_directors(G):
 def get_average_degree_for_renowned_directors(G):
     pass
 
+# Gets all opportunites for each role under each director
+def get_total_opportunites(G):
+    # Get directors in graph
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    dirs_role_count = {}
+    for dir in dirs:
+        # Keep track of total opportunities under each role
+        role_count = {}
+        # Go through crew working under director
+        for crew_mem in G.neighbors(dir):
+            # Get the crew member role and the number of times they have worked with the director (weight)
+            crew_mem_role = G.nodes[crew_mem]['role']
+            crew_og_weight = G.get_edge_data(dir,crew_mem)['weight']
+            # If their role is in the final dictionary, add their weight to the current opportunities count
+            if crew_mem_role in role_count.keys():
+                role_count[crew_mem_role] += crew_og_weight
+            # If their role is not in the final dictionary, add the role with value being the weight of director, crew member edge
+            else:
+                role_count[crew_mem_role] = crew_og_weight
+        dirs_role_count[dir] = role_count
+    # Return the opportunity role count dictionary
+    return dirs_role_count
 
-# Get the role homogeneity of one director given the graph and director name
-# Choose to include/exclude director-director connections
+# Gets the role homogeneity of one director
 def get_role_homogeneity_for_one_director(G, director, exclude_dir_conns=True):
     # Get all crew that have worked with director and if needed, exclude director-director connections
     if exclude_dir_conns!=True:
@@ -109,7 +132,7 @@ def get_role_homogeneity_for_one_director(G, director, exclude_dir_conns=True):
     role_homogeneity_dict = dict(sorted(role_homogeneity_dict.items(), key=lambda item: item[1],reverse=True))
     return role_homogeneity_dict
 
-# Get average role homogeneity for each director in dictionary format
+# Gets average role homogeneity for each director in dictionary format
 # Choose to include/exclude director-director connections
 def get_role_homogeneity_dict(G, path_to_csv, exclude_dir_conns=True):
     # Get a list of the directors from csv
@@ -147,6 +170,20 @@ def get_avg_role_homogeneity_dict(G, path_to_csv, exclude_dir_conns=True):
     avg_role_homogeneity_dict = dict(sorted(avg_role_homogeneity_dict.items(), key=lambda item: item[1],reverse=True))
     return avg_role_homogeneity_dict
 
+# TBF -- will print top 3 homogeneous roles for each director, their custlabel and their avg. homogeneity
+def get_main_stats(G,path_to_csv, exclude_dir_conns=True):
+    if exclude_dir_conns != True:
+        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv,False)
+    else:
+        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv)
+    for director in role_homogeneity_all_dirs_dict.values():
+        rh = role_homogeneity_all_dirs_dict[director]
+        print(rh)
+        # top_roles = list(rh.values())[0:3]
+        # print(director)
+        # print(top_roles)
+        # print('')
+
 # Print role homogeneity for every director or any given director when given respective dictionary
 def pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict, director=None):
     print('')
@@ -165,7 +202,6 @@ def pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict, director=N
             print('')
     print('')
 
-
 # Print the avg. role homogeneity for every director or any given director when given respective dictionary
 def pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict, director=None):
     print('')
@@ -177,7 +213,6 @@ def pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict, director=No
         for director, arh in avg_role_homogeneity_dict.items():
             print(director + ': ' + str(arh))
     print('')
-
 
 def pretty_print_dict(dict):
     for key, value in dict.items():
