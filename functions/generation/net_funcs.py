@@ -1,5 +1,5 @@
 from .find_info import extract_info
-from ..analysis.basic_stats import get_total_opportunites
+from ..analysis.basic_stats import get_total_opportunites, get_avg_role_homogeneity_dict
 import fileinput
 import json
 import pickle
@@ -186,6 +186,13 @@ def add_norm_weights_to_network(G):
             # Add normalized weight to graph G
             G[director][crew_mem]['norm_weight'] = norm_weight
     return G
+
+def add_homogeneity_to_network(G, exclude_dirs=True):
+    dir_avgs = get_avg_role_homogeneity_dict(G, exclude_dirs)
+    for director,arh in dir_avgs.items():
+        G.nodes[director]['arh'] = arh
+    return G
+
 
 
 # Tyler Perry

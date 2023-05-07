@@ -1,5 +1,5 @@
 from functions.generation.find_info import find_file_paths
-from functions.generation.net_funcs import jsonl_to_network, add_metadata_to_network, add_diversity_attr_to_network, normalize_weights, extract_metadata, remove_parsed_directors, add_norm_weights_to_network
+from functions.generation.net_funcs import jsonl_to_network, add_metadata_to_network, add_diversity_attr_to_network, normalize_weights, extract_metadata, remove_parsed_directors, add_norm_weights_to_network, add_homogeneity_to_network
 import networkx as nx
 import pandas as pd
 import argparse
@@ -44,9 +44,11 @@ if __name__ == "__main__":
     if args.directorexclusions:
         G = remove_parsed_directors(G)
 
-    # G = normalize_weights(G)
     G = add_norm_weights_to_network(G)
     print("Added normalized weights to network..")
+
+    G = add_homogeneity_to_network(G)
+    print("Added homogeneity to network..")
 
     gephi_filename = "./networks/network-"+str(num_directors)+".gexf"
     gephi_filename_gz = "./networks/network-" + str(num_directors) + ".gexf.gz"

@@ -1,5 +1,5 @@
 from functions.generation.find_info import find_file_paths, get_director_list
-from functions.generation.net_funcs import normalize_weights, add_norm_weights_to_network
+from functions.generation.net_funcs import normalize_weights, add_norm_weights_to_network, add_homogeneity_to_network
 from functions.analysis import basic_stats
 import networkx as nx
 import pickle

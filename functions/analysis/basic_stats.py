@@ -134,32 +134,22 @@ def get_role_homogeneity_for_one_director(G, director, exclude_dir_conns=True):
 
 # Gets average role homogeneity for each director in dictionary format
 # Choose to include/exclude director-director connections
-def get_role_homogeneity_dict(G, path_to_csv, exclude_dir_conns=True):
+def get_role_homogeneity_dict(G, exclude_dir_conns=True):
     # Get a list of the directors from csv
-    director_list = find_info.get_director_list(path_to_csv)
+    director_list = [person for person in G.nodes if 'director' in G.nodes[person]]
     # Initialize a dictionary to collect all role homogeneity values for every director
     role_homogeneity_all_dirs_dict = {}
     # For each director calculate their role homogeneity
     for director in director_list:
-        # Include director-director connections
-        if exclude_dir_conns != True:
-            role_homogeneity_dict = get_role_homogeneity_for_one_director(G, director, False)
-        # Exclude director-director connections
-        else:
-            role_homogeneity_dict = get_role_homogeneity_for_one_director(G, director)
+        role_homogeneity_dict = get_role_homogeneity_for_one_director(G, director, exclude_dir_conns)
         # Add role homogeneity dictionary to respective dictionary with director as key
         role_homogeneity_all_dirs_dict[director] = role_homogeneity_dict
     return role_homogeneity_all_dirs_dict
 
 # Get average role homogeneity for each director in dictionary format
 # Choose to include/exclude director-director connections
-def get_avg_role_homogeneity_dict(G, path_to_csv, exclude_dir_conns=True):
-    # Include director-director connections
-    if exclude_dir_conns !=True:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv,False)
-    # Exclude director-director connections
-    else:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv)
+def get_avg_role_homogeneity_dict(G, exclude_dir_conns=True):
+    role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
     # Initialize a dictionary to collect all avg. role homogeneity scores
     avg_role_homogeneity_dict = {}
     # Add all avg. role homogeneity values to respective dictionary with director as key
@@ -171,11 +161,11 @@ def get_avg_role_homogeneity_dict(G, path_to_csv, exclude_dir_conns=True):
     return avg_role_homogeneity_dict
 
 # TBF -- will print top 3 homogeneous roles for each director, their custlabel and their avg. homogeneity
-def get_main_stats(G,path_to_csv, exclude_dir_conns=True):
+def get_main_stats(G, exclude_dir_conns=True):
     if exclude_dir_conns != True:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv,False)
+        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,False)
     else:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,path_to_csv)
+        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G)
     for director in role_homogeneity_all_dirs_dict.values():
         rh = role_homogeneity_all_dirs_dict[director]
         print(rh)
