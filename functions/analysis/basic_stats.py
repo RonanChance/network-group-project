@@ -1,9 +1,12 @@
 import pickle
 import fileinput
+import pandas as pd
 import json
 import networkx as nx
 import numpy as np
 from ..generation import find_info
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Get list of all movies across all jsonl files or for one specific director 
 def find_movie_names(director_first_middle_name=None, director_last_name=None):
@@ -174,7 +177,7 @@ def get_avg_role_homogeneity_dict(G, exclude_dir_conns=True):
     avg_role_homogeneity_dict = dict(sorted(avg_role_homogeneity_dict.items(), key=lambda item: item[1],reverse=True))
     return avg_role_homogeneity_dict
 
-# TBF -- will print top 3 homogeneous roles for each director, their custlabel and their avg. homogeneity
+# Prints top 3 homogeneous roles for each director, their custlabel, and their avg. homogeneity
 def get_main_stats(G, top_dirs=False,exclude_dir_conns=True):
     rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
     arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
@@ -194,6 +197,20 @@ def get_main_stats(G, top_dirs=False,exclude_dir_conns=True):
         if top_dirs is True and numbered == 10:
             break
         numbered += 1
+
+# Gets main stats into a csv file for graph creation
+def main_stats_to_csv(G, exclude_dir_conns=True):
+    stats_df = pd.DataFrame()
+    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
+    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
+    for dir, arh in arh_all_dirs_dict.items():
+        label = G.nodes[dir]['custlabel']
+        top_roles = list(rh_all_dirs_dict[dir].keys())[:3]
+        top_3 = F"{top_roles[0]}, {top_roles[1]}, {top_roles[2]}"
+        dir_info = {"name":dir, "custlabel": label, "arh": arh, "top_3":top_3, "role1":top_roles[0],"role2":top_roles[1], "role3": top_roles[2]}
+        stats_df = stats_df.append(dir_info, ignore_index=True)
+    stats_df.to_csv("main_stats.csv")
+    print("Wrote main_stats.csv..")
 
 def get_dir_clustering_coefs(G):
     dirs = [person for person in G.nodes if 'director' in G.nodes[person]]

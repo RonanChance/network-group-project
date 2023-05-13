@@ -1,0 +1,102 @@
+,name,custlabel,arh,top_3,role1,role2,role3
+0,Joel Coen,MW,0.655,"Music, Costume Design, Cinematography by",Music,Costume Design,Cinematography by
+1,Lilly Wachowski,FWQ,0.65,"Costume Design, Film Editing by, Production",Costume Design,Film Editing by,Production
+2,Lana Wachowski,FWQ,0.624,"Music, Costume Design, Film Editing by",Music,Costume Design,Film Editing by
+3,Tyler Perry,MB,0.598,"Film Editing by, Production, Cinematography by",Film Editing by,Production,Cinematography by
+4,David Lynch,MW,0.581,"Music, Production, Cinematography by",Music,Production,Cinematography by
+5,Peter Jackson,MWH,0.579,"Writing Credits, Cinematography by, Production",Writing Credits,Cinematography by,Production
+6,Gus Van Sant,MWQ,0.577,"Cinematography by, Film Editing by, Production",Cinematography by,Film Editing by,Production
+7,Woody Allen,MW,0.565,"Film Editing by, Production, Cinematography by",Film Editing by,Production,Cinematography by
+8,Jane Campion,FW,0.558,"Cinematography by, Film Editing by, Production",Cinematography by,Film Editing by,Production
+9,Alexander Payne,MW,0.555,"Cinematography by, Film Editing by, Music",Cinematography by,Film Editing by,Music
+10,Clint Eastwood,MW,0.548,"Film Editing by, Cinematography by, Production",Film Editing by,Cinematography by,Production
+11,David Cronenberg,MW,0.547,"Cinematography by, Production, Film Editing by",Cinematography by,Production,Film Editing by
+12,David Yates,MWH,0.543,"Film Editing by, Production, Music",Film Editing by,Production,Music
+13,Barry Jenkins,MB,0.511,"Costume Design, Cinematography by, Music",Costume Design,Cinematography by,Music
+14,Christopher Nolan,MWH,0.493,"Cinematography by, Music, Production",Cinematography by,Music,Production
+15,Alejandro G. Iñárritu,ML,0.489,"Cinematography by, Production, Film Editing by",Cinematography by,Production,Film Editing by
+16,Steven Soderbergh,MW,0.466,"Music, Production, Costume Design",Music,Production,Costume Design
+17,Spike Lee,MB,0.465,"Film Editing by, Music, Costume Design",Film Editing by,Music,Costume Design
+18,Alfonso Cuarón,ML,0.461,"Cinematography by, Film Editing by, Costume Design",Cinematography by,Film Editing by,Costume Design
+19,Robert Zemeckis,MWH,0.454,"Music, Costume Design, Cinematography by",Music,Costume Design,Cinematography by
+20,Steven Spielberg,MWH,0.443,"Music, Film Editing by, Cinematography by",Music,Film Editing by,Cinematography by
+21,Wes Anderson,MW,0.429,"Music, Cinematography by, Costume Design",Music,Cinematography by,Costume Design
+22,Bryan Singer,MWH,0.428,"Music, Cinematography by, Costume Design",Music,Cinematography by,Costume Design
+23,Gore Verbinski,MWH,0.411,"Film Editing by, Cinematography by, Music",Film Editing by,Cinematography by,Music
+24,Kelly Reichardt,FW,0.409,"Film Editing by, Writing Credits, Cinematography by",Film Editing by,Writing Credits,Cinematography by
+25,J.J. Abrams,MWH,0.404,"Cinematography by, Film Editing by, Music",Cinematography by,Film Editing by,Music
+26,Tim Burton,MWH,0.402,"Costume Design, Music, Film Editing by",Costume Design,Music,Film Editing by
+27,Michael Bay,MWH,0.397,"Music, Film Editing by, Production",Music,Film Editing by,Production
+28,Ridley Scott,MWH,0.39,"Production, Costume Design, Film Editing by",Production,Costume Design,Film Editing by
+29,Martin Scorsese,MW,0.385,"Production, Film Editing by, Costume Design",Production,Film Editing by,Costume Design
+30,Richard Linklater,MW,0.378,"Film Editing by, Cinematography by, Costume Design",Film Editing by,Cinematography by,Costume Design
+31,Gregg Araki,MAQ,0.373,"Film Editing by, Special Effects by, Production",Film Editing by,Special Effects by,Production
+32,Anthony Russo,MWH,0.373,"Costume Design, Writing Credits, Music",Costume Design,Writing Credits,Music
+33,Quentin Tarantino,MW,0.37,"Film Editing by, Cinematography by, Production",Film Editing by,Cinematography by,Production
+34,Ryan Coogler,MB,0.367,"Production, Cinematography by, Music",Production,Cinematography by,Music
+35,Mira Nair,FA,0.36,"Film Editing by, Music, Cinematography by",Film Editing by,Music,Cinematography by
+36,Lynn Shelton,FW,0.358,"Special Effects by, Cinematography by, Production",Special Effects by,Cinematography by,Production
+37,James Wan,MAH,0.351,"Music, Production, Film Editing by",Music,Production,Film Editing by
+38,Darren Aronofsky,MW,0.349,"Cinematography by, Film Editing by, Music",Cinematography by,Film Editing by,Music
+39,Francis Ford Coppola,MW,0.346,"Production, Film Editing by, Music",Production,Film Editing by,Music
+40,Roland Emmerich,MWH,0.345,"Music, Cinematography by, Production",Music,Cinematography by,Production
+41,Terrence Malick,MW,0.341,"Writing Credits, Production, Film Editing by",Writing Credits,Production,Film Editing by
+42,Greta Gerwig,FW,0.337,"Production, Writing Credits, Film Editing by",Production,Writing Credits,Film Editing by
+43,Adam McKay,MW,0.337,"Production, Film Editing by, Music",Production,Film Editing by,Music
+44,Ron Howard,MWH,0.334,"Film Editing by, Music, Production",Film Editing by,Music,Production
+45,Sam Raimi,MWH,0.328,"Music, Film Editing by, Costume Design",Music,Film Editing by,Costume Design
+46,Rian Johnson,MW,0.327,"Cinematography by, Music, Film Editing by",Cinematography by,Music,Film Editing by
+47,Jon Favreau,MWH,0.323,"Costume Design, Film Editing by, Music",Costume Design,Film Editing by,Music
+48,Paul Thomas Anderson,MW,0.317,"Costume Design, Cinematography by, Film Editing by",Costume Design,Cinematography by,Film Editing by
+49,Justin Lin,MA,0.311,"Music, Costume Design, Film Editing by",Music,Costume Design,Film Editing by
+50,Sofia Coppola,FW,0.294,"Production, Film Editing by, Cinematography by",Production,Film Editing by,Cinematography by
+51,Oliver Stone,MW,0.293,"Film Editing by, Cinematography by, Production",Film Editing by,Cinematography by,Production
+52,Ang Lee,MA,0.278,"Film Editing by, Sound Department, Cinematography by",Film Editing by,Sound Department,Cinematography by
+53,James Gray,MW,0.271,"Production, Film Editing by, Music",Production,Film Editing by,Music
+54,Spike Jonze,MW,0.271,"Costume Design, Production, Film Editing by",Costume Design,Production,Film Editing by
+55,Julie Taymor,FW,0.263,"Music, Film Editing by, Production",Music,Film Editing by,Production
+56,Antoine Fuqua,MB,0.254,"Music, Cinematography by, Film Editing by",Music,Cinematography by,Film Editing by
+57,Jim Jarmusch,MW,0.254,"Film Editing by, Cinematography by, Music",Film Editing by,Cinematography by,Music
+58,M. Night Shyamalan,MA,0.243,"Music, Costume Design, Film Editing by",Music,Costume Design,Film Editing by
+59,Cameron Crowe,MW,0.24,"Costume Design, Film Editing by, Music",Costume Design,Film Editing by,Music
+60,Nancy Meyers,FW,0.24,"Production, Music, Film Editing by",Production,Music,Film Editing by
+61,Brian De Palma,MW,0.239,"Film Editing by, Music, Cinematography by",Film Editing by,Music,Cinematography by
+62,Taika Waititi,MI,0.239,"Costume Design, Music, Production",Costume Design,Music,Production
+63,Guillermo del Toro,ML,0.232,"Cinematography by, Film Editing by, Costume Design",Cinematography by,Film Editing by,Costume Design
+64,James Cameron,MWH,0.221,"Film Editing by, Music, Cinematography by",Film Editing by,Music,Cinematography by
+65,Jordan Peele,MB,0.221,"Music, Production, Film Editing by",Music,Production,Film Editing by
+66,Miguel Arteta,ML,0.22,"Cinematography by, Film Editing by, Music",Cinematography by,Film Editing by,Music
+67,Nicole Holofcener,FW,0.217,"Writing Credits, Film Editing by, Music",Writing Credits,Film Editing by,Music
+68,Charles Burnett,MB,0.216,"Special Effects by, Music, Sound Department",Special Effects by,Music,Sound Department
+69,David O. Russell,MW,0.216,"Production, Film Editing by, Costume Design",Production,Film Editing by,Costume Design
+70,Sterlin Harjo,MI,0.213,"Music, Cinematography by, Film Editing by",Music,Cinematography by,Film Editing by
+71,Amy Heckerling,FW,0.213,"Music, Film Editing by, Costume Design",Music,Film Editing by,Costume Design
+72,David Fincher,MW,0.209,"Music, Sound Department, Production",Music,Sound Department,Production
+73,Chris Columbus,MWH,0.207,"Music, Film Editing by, Production",Music,Film Editing by,Production
+74,Niki Caro,FW,0.2,"Film Editing by, Production, Music",Film Editing by,Production,Music
+75,Sarah Polley,FW,0.2,"Cinematography by, Music, Film Editing by",Cinematography by,Music,Film Editing by
+76,Marielle Heller,FW,0.197,"Music, Film Editing by, Cinematography by",Music,Film Editing by,Cinematography by
+77,Noah Baumbach,MW,0.193,"Costume Design, Cinematography by, Film Editing by",Costume Design,Cinematography by,Film Editing by
+78,Mike Mills,MW,0.185,"Writing Credits, Costume Design, Music",Writing Credits,Costume Design,Music
+79,Andrea Arnold,FW,0.181,"Production, Cinematography by, Film Editing by",Production,Cinematography by,Film Editing by
+80,Wayne Wang,MA,0.179,"Film Editing by, Cinematography by, Music",Film Editing by,Cinematography by,Music
+81,Anne Fletcher,FW,0.172,"Production, Cinematography by, Sound Department",Production,Cinematography by,Sound Department
+82,Kathryn Bigelow,FW,0.171,"Production, Film Editing by, Writing Credits",Production,Film Editing by,Writing Credits
+83,Pablo Larraín,ML,0.167,"Production, Music, Sound Department",Production,Music,Sound Department
+84,Gina Prince-Bythewood,FB,0.166,"Film Editing by, Costume Design, Cinematography by",Film Editing by,Costume Design,Cinematography by
+85,Jon M. Chu,MA,0.163,"Production, Cinematography by, Film Editing by",Production,Cinematography by,Film Editing by
+86,Dee Rees,FBQ,0.163,"Film Editing by, Music, Production",Film Editing by,Music,Production
+87,Denis Villeneuve,MW,0.162,"Costume Design, Film Editing by, Production",Costume Design,Film Editing by,Production
+88,Michael Mann,MW,0.161,"Film Editing by, Music, Cinematography by",Film Editing by,Music,Cinematography by
+89,Catherine Hardwicke,FW,0.158,"Cinematography by, Costume Design, Music",Cinematography by,Costume Design,Music
+90,Ava DuVernay,FB,0.15,"Film Editing by, Music, Cinematography by",Film Editing by,Music,Cinematography by
+91,Lee Daniels,MBQ,0.136,"Cinematography by, Film Editing by, Music",Cinematography by,Film Editing by,Music
+92,Jon Watts,MWH,0.135,"Writing Credits, Music, Film Editing by",Writing Credits,Music,Film Editing by
+93,Kasi Lemmons,FB,0.13,"Film Editing by, Music, Production",Film Editing by,Music,Production
+94,Todd Haynes,MWQ,0.129,"Film Editing by, Cinematography by, Costume Design",Film Editing by,Cinematography by,Costume Design
+95,Cary Joji Fukunaga,MA,0.119,"Cinematography by, Music, Film Editing by",Cinematography by,Music,Film Editing by
+96,Patty Jenkins,FW,0.109,"Production, Costume Design, Special Effects by",Production,Costume Design,Special Effects by
+97,Karyn Kusama,FA,0.108,"Writing Credits, Film Editing by, Music",Writing Credits,Film Editing by,Music
+98,F. Gary Gray,MB,0.107,"Sound Department, Film Editing by, Costume Design",Sound Department,Film Editing by,Costume Design
+99,Mary Harron,FW,0.069,"Writing Credits, Production, Music",Writing Credits,Production,Music
+100,Chloé Zhao,FA,0.064,"Cinematography by, Sound Department, Makeup Department",Cinematography by,Sound Department,Makeup Department

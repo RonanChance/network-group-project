@@ -30,27 +30,18 @@ if __name__ == "__main__":
     # basic_stats.pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict)
 
     # # Get avg. degree for only director nodes
-    print("")
-    basic_stats.get_average_degree_for_all_directors(G)
-    print("")
-    basic_stats.get_average_degree_for_minority_directors(G)
-    print("")
-    basic_stats.get_average_degree_for_renowned_directors(G)
-    print("")
+    # print("")
+    # basic_stats.get_average_degree_for_all_directors(G)
+    # print("")
+    # basic_stats.get_average_degree_for_minority_directors(G)
+    # print("")
+    # basic_stats.get_average_degree_for_renowned_directors(G)
+    # print("")
+
+    # basic_stats.get_dir_clustering_coefs(G)
 
     # print(nx.average_clustering(G))
 
-# TBF --
-    # dirs = get_director_list(path_to_csv)
-    # print("Triangles for each director")
-    # print("---")
-    # tri = {}
-    # for dir in dirs:
-    #     tri[dir]
-    #     sim_crew = nx.triangles(G,dir)
-    #     print(F"{dir}: {sim_crew}")
 
 # print(nx.average_shortest_path_length(G))
-
 # basic_stats.get_dir_clustering_coefs(G)
-# basic_stats.get_main_stats(G)
