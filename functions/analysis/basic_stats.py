@@ -56,20 +56,34 @@ def find_movie_names(director_first_middle_name=None, director_last_name=None):
 
 def get_average_degree_for_all_directors(G):
     # Get all directors in graph G
-    dir_dict = nx.get_node_attributes(G,"director")
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
     # Make a list of all directors degrees
-    dir_degrees = [G.degree(dir) for dir in dir_dict.keys()]
+    dir_degrees = [G.degree(dir) for dir in dirs]
     # Get the average director degree
     dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
-    print("")
     print("All Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
-    print("")
 
 def get_average_degree_for_minority_directors(G): 
-    pass
+    # Get all directors in graph G
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Filter out non-minority dirs
+    min_dirs = [dir for dir in dirs if G.nodes[dir]['custlabel'] != 'MWH' and G.nodes[dir]['custlabel'] != 'MW']
+    # Make a list of all directors degrees
+    dir_degrees = [G.degree(min_dir) for min_dir in min_dirs]
+    # Get the average director degree
+    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
+    print("Minority Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
 
 def get_average_degree_for_renowned_directors(G):
-    pass
+    # Get all directors in graph G
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Filter out non-minority dirs
+    rnwd_dirs = [dir for dir in dirs if "H" in G.nodes[dir]['custlabel']]
+    # Make a list of all directors degrees
+    dir_degrees = [G.degree(rnwd_dir) for rnwd_dir in rnwd_dirs]
+    # Get the average director degree
+    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
+    print("Renowned Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
 
 # Gets all opportunites for each role under each director
 def get_total_opportunites(G):
@@ -161,18 +175,39 @@ def get_avg_role_homogeneity_dict(G, exclude_dir_conns=True):
     return avg_role_homogeneity_dict
 
 # TBF -- will print top 3 homogeneous roles for each director, their custlabel and their avg. homogeneity
-def get_main_stats(G, exclude_dir_conns=True):
-    if exclude_dir_conns != True:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G,False)
-    else:
-        role_homogeneity_all_dirs_dict = get_role_homogeneity_dict(G)
-    for director in role_homogeneity_all_dirs_dict.values():
-        rh = role_homogeneity_all_dirs_dict[director]
-        print(rh)
-        # top_roles = list(rh.values())[0:3]
-        # print(director)
-        # print(top_roles)
-        # print('')
+def get_main_stats(G, top_dirs=False,exclude_dir_conns=True):
+    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
+    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
+    print('')
+    print("Name | Attributes | Avg. Role Homogeneity | Top 3 Homogeneous Roles")
+    print('-----')
+    numbered = 1
+    for dir, arh in arh_all_dirs_dict.items():
+        # Get all director attributes
+        attr = G.nodes[dir]['custlabel']
+        # Get avg. role homogeneity
+        arh = arh_all_dirs_dict[dir]
+        # Get top 3 homogeneous roles
+        top_3 = list(rh_all_dirs_dict[dir].keys())[:3]
+        print(F"{numbered}. {dir} | {attr} | {arh} | {top_3[0]}, {top_3[1]}, {top_3[2]}")
+        print('')
+        if top_dirs is True and numbered == 10:
+            break
+        numbered += 1
+
+def get_dir_clustering_coefs(G):
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    clust_coef = {}
+    print('')
+    for dir in dirs:
+        clust_coef[dir] = round(nx.clustering(G,dir), 6)
+    clust_coef = dict(sorted(clust_coef.items(), key=lambda item: item[1],reverse=True))
+    print("Director Name | Attributes | Clustering Coefficient")
+    print("---")
+    for dir, cc in clust_coef.items():
+        attr = G.nodes[dir]['custlabel']
+        print(F"{dir} | {attr} | {cc}")
+
 
 # Print role homogeneity for every director or any given director when given respective dictionary
 def pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict, director=None):
