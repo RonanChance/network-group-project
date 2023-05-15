@@ -9,12 +9,12 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Get list of all movies across all jsonl files or for one specific director 
-def find_movie_names(director_first_middle_name=None, director_last_name=None):
+def find_movie_names(first_middle_name=None, last_name=None):
     file_paths = sorted(find_info.find_file_paths())
     movie_names = []
     total_num_uniq_movies = 0
     # If given no name or full director name is not inputted, return all movies
-    if director_last_name==None or director_last_name==None:
+    if first_middle_name is None or last_name is None:
         # Go through each file
         for file in file_paths:
             file = fileinput.input(file)
@@ -32,14 +32,14 @@ def find_movie_names(director_first_middle_name=None, director_last_name=None):
     # If given full director name, return their movies.
     else:
         # Save the director's full name
-        dir_full_name = str(director_first_middle_name + " " + director_last_name)
+        dir_full_name = str(first_middle_name + " " + last_name)
 
         # Add dashes and correctly format the full name of the director to find path
-        if ' ' in director_first_middle_name:
-            director_first_middle_name = director_first_middle_name.replace(" ", "-")
-        if ' ' in director_last_name:
-            director_last_name = director_last_name.replace(" ", "-")
-        dir_name_dashed = director_last_name + '-' + director_first_middle_name 
+        if ' ' in first_middle_name:
+            first_middle_name = first_middle_name.replace(" ", "-")
+        if ' ' in last_name:
+            last_name = last_name.replace(" ", "-")
+        dir_name_dashed = last_name + '-' + first_middle_name 
 
         # Find associated director path and file
         dir_path = [path for path in file_paths if dir_name_dashed in path]
@@ -57,36 +57,32 @@ def find_movie_names(director_first_middle_name=None, director_last_name=None):
         file.close()
         return dir_full_name, list(movie_names), total_num_uniq_movies
 
-def get_average_degree_for_all_directors(G):
-    # Get all directors in graph G
-    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
-    # Make a list of all directors degrees
-    dir_degrees = [G.degree(dir) for dir in dirs]
-    # Get the average director degree
-    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
-    print("All Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
+# Get all unique roles in the dataset
+def get_unique_roles(G):
+    unique_roles = set(G.nodes[node]['role'] for node in G.nodes)
+    print("Unique Roles")
+    print("---")
+    for role in unique_roles:
+        print(role)
+    print("Number of unique roles: " + str(len(unique_roles)))
 
-def get_average_degree_for_minority_directors(G): 
-    # Get all directors in graph G
-    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
-    # Filter out non-minority dirs
-    min_dirs = [dir for dir in dirs if G.nodes[dir]['custlabel'] != 'MWH' and G.nodes[dir]['custlabel'] != 'MW']
-    # Make a list of all directors degrees
-    dir_degrees = [G.degree(min_dir) for min_dir in min_dirs]
-    # Get the average director degree
-    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
-    print("Minority Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
-
-def get_average_degree_for_renowned_directors(G):
-    # Get all directors in graph G
-    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
-    # Filter out non-minority dirs
-    rnwd_dirs = [dir for dir in dirs if "H" in G.nodes[dir]['custlabel']]
-    # Make a list of all directors degrees
-    dir_degrees = [G.degree(rnwd_dir) for rnwd_dir in rnwd_dirs]
-    # Get the average director degree
-    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
-    print("Renowned Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
+# Gets the crew that has worked with the highest number of unique directors
+def get_worked_with_most_directors(G):
+    worked_with_dict = {}
+    worked_with_count_dict = {}
+    for node in G.nodes:
+        dirs_worked_with = [neighbor for neighbor in list(G.neighbors(node)) if 'director' in G.nodes[neighbor]]
+        worked_with_dict[node] = dirs_worked_with
+        worked_with_count_dict[node] = len(dirs_worked_with)
+    worked_with_count_dict = dict(sorted(worked_with_count_dict.items(), key=lambda item: item[1],reverse=True))
+    max_value = list(worked_with_count_dict.values())[0]
+    top_crew = [key for key,value in worked_with_count_dict.items() if value == max_value]
+    for crew in top_crew:
+        print(F"{crew} has worked with {max_value} unique directors out of the 101 directors in the network.")
+        print(F"Directors {crew} worked with:")
+        for dirs in worked_with_dict[crew]:
+            print(dirs)
+        print("")
 
 # Gets all opportunites for each role under each director
 def get_total_opportunites(G):
@@ -110,6 +106,74 @@ def get_total_opportunites(G):
         dirs_role_count[dir] = role_count
     # Return the opportunity role count dictionary
     return dirs_role_count
+
+# Gives total number of opportunities for a role under one director
+def get_role_opportunity_count(G, role_type, director):
+    dirs_role_count = get_total_opportunites(G)
+    role_slots = dirs_role_count[director][role_type]
+    print(F"Director: {director} | Role Type: {role_type} | Number of Opportunities: {role_slots}")
+
+# Get the metadata of a given person
+def get_metadata_for_one_person(person_name):
+    with open('./metadata/metadata-101.pkl', 'rb') as f:
+        metadata = pickle.load(f)
+    print("Metadata for:", person_name, "\n")
+    pretty_print_dict(metadata[person_name])
+
+def pretty_print_dict(dict):
+    for key, value in dict.items():
+        print(key + ":", value, "\n")
+    
+# Get clustering coeficcients for each director
+def get_dir_clustering_coefs(G, top_dirs=False):
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    clust_coef = {}
+    for dir in dirs:
+        clust_coef[dir] = round(nx.clustering(G,dir), 6)
+    clust_coef = dict(sorted(clust_coef.items(), key=lambda item: item[1],reverse=True))
+    print("Director Name | Attributes | Clustering Coefficient")
+    print("")
+    number = 1
+    for dir, cc in clust_coef.items():
+        attr = G.nodes[dir]['custlabel']
+        print(F"{number}. {dir} | {attr} | {cc}")
+        if top_dirs is True and number == 10:
+            break
+        number += 1
+
+# Gets average degree of all directors (excluding crew)
+def get_average_degree_for_all_directors(G):
+    # Get all directors in graph G
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Make a list of all directors degrees
+    dir_degrees = [G.degree(dir) for dir in dirs]
+    # Get the average director degree
+    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
+    print("All Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
+
+# Gets average degree of minority directors (excluding crew)
+def get_average_degree_for_minority_directors(G): 
+    # Get all directors in graph G
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Filter out non-minority dirs
+    min_dirs = [dir for dir in dirs if G.nodes[dir]['custlabel'] != 'MWH' and G.nodes[dir]['custlabel'] != 'MW']
+    # Make a list of all directors degrees
+    dir_degrees = [G.degree(min_dir) for min_dir in min_dirs]
+    # Get the average director degree
+    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
+    print("Minority Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
+
+# Gets average degree of renowned directors (excluding crew)
+def get_average_degree_for_renowned_directors(G):
+    # Get all directors in graph G
+    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
+    # Filter out non-minority dirs
+    rnwd_dirs = [dir for dir in dirs if "H" in G.nodes[dir]['custlabel']]
+    # Make a list of all directors degrees
+    dir_degrees = [G.degree(rnwd_dir) for rnwd_dir in rnwd_dirs]
+    # Get the average director degree
+    dirs_avg_degree = sum(dir_degrees)/len(dir_degrees)
+    print("Renowned Directors Avg. Degree (excluding crew): " + str(round(dirs_avg_degree, 4)))
 
 # Gets the role homogeneity of one director
 def get_role_homogeneity_for_one_director(G, director, exclude_dir_conns=True):
@@ -177,58 +241,8 @@ def get_avg_role_homogeneity_dict(G, exclude_dir_conns=True):
     avg_role_homogeneity_dict = dict(sorted(avg_role_homogeneity_dict.items(), key=lambda item: item[1],reverse=True))
     return avg_role_homogeneity_dict
 
-# Prints top 3 homogeneous roles for each director, their custlabel, and their avg. homogeneity
-def get_main_stats(G, top_dirs=False,exclude_dir_conns=True):
-    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
-    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
-    print('')
-    print("Name | Attributes | Avg. Role Homogeneity | Top 3 Homogeneous Roles")
-    print('-----')
-    numbered = 1
-    for dir, arh in arh_all_dirs_dict.items():
-        # Get all director attributes
-        attr = G.nodes[dir]['custlabel']
-        # Get avg. role homogeneity
-        arh = arh_all_dirs_dict[dir]
-        # Get top 3 homogeneous roles
-        top_3 = list(rh_all_dirs_dict[dir].keys())[:3]
-        print(F"{numbered}. {dir} | {attr} | {arh} | {top_3[0]}, {top_3[1]}, {top_3[2]}")
-        print('')
-        if top_dirs is True and numbered == 10:
-            break
-        numbered += 1
-
-# Gets main stats into a csv file for graph creation
-def main_stats_to_csv(G, exclude_dir_conns=True):
-    stats_df = pd.DataFrame()
-    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
-    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
-    for dir, arh in arh_all_dirs_dict.items():
-        label = G.nodes[dir]['custlabel']
-        top_roles = list(rh_all_dirs_dict[dir].keys())[:3]
-        top_3 = F"{top_roles[0]}, {top_roles[1]}, {top_roles[2]}"
-        dir_info = {"name":dir, "custlabel": label, "arh": arh, "top_3":top_3, "role1":top_roles[0],"role2":top_roles[1], "role3": top_roles[2]}
-        stats_df = stats_df.append(dir_info, ignore_index=True)
-    stats_df.to_csv("main_stats.csv")
-    print("Wrote main_stats.csv..")
-
-def get_dir_clustering_coefs(G):
-    dirs = [person for person in G.nodes if 'director' in G.nodes[person]]
-    clust_coef = {}
-    print('')
-    for dir in dirs:
-        clust_coef[dir] = round(nx.clustering(G,dir), 6)
-    clust_coef = dict(sorted(clust_coef.items(), key=lambda item: item[1],reverse=True))
-    print("Director Name | Attributes | Clustering Coefficient")
-    print("---")
-    for dir, cc in clust_coef.items():
-        attr = G.nodes[dir]['custlabel']
-        print(F"{dir} | {attr} | {cc}")
-
-
 # Print role homogeneity for every director or any given director when given respective dictionary
 def pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict, director=None):
-    print('')
     if director != None:
         role_reuse_values = role_homogeneity_all_dirs_dict[director]
         print("Role Homogeneity for " + director)
@@ -246,7 +260,6 @@ def pretty_print_get_role_homogeneity(role_homogeneity_all_dirs_dict, director=N
 
 # Print the avg. role homogeneity for every director or any given director when given respective dictionary
 def pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict, director=None):
-    print('')
     if director is not None:
         print(director + ' Avg. Role Homogeneity: ' + str(avg_role_homogeneity_dict[director]))
     else:
@@ -256,14 +269,42 @@ def pretty_print_get_avg_role_homogeneity(avg_role_homogeneity_dict, director=No
             print(director + ': ' + str(arh))
     print('')
 
-def pretty_print_dict(dict):
-    for key, value in dict.items():
-        print(key + ":", value, "\n")
+# Prints top 3 homogeneous roles for each director, their custlabel, and their avg. homogeneity
+def get_main_stats(G, top_dirs=False,exclude_dir_conns=True):
+    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
+    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
+    print('')
+    print("Name | Labels | Avg. Role Homogeneity | Top 3 Homogeneous Roles")
+    print('-----')
+    numbered = 1
+    for dir, arh in arh_all_dirs_dict.items():
+        # Get all director attributes
+        attr = G.nodes[dir]['custlabel']
+        # Get avg. role homogeneity
+        arh = arh_all_dirs_dict[dir]
+        # Get top 3 homogeneous roles
+        top_3 = list(rh_all_dirs_dict[dir].keys())[:3]
+        print(F"{numbered}. {dir} | {attr} | {arh} | {top_3[0]}, {top_3[1]}, {top_3[2]}")
+        print('')
+        if top_dirs is True and numbered == 10:
+            break
+        numbered += 1
 
-if __name__ == "__main__":
-    with open('.../metadata/metadata-101.pkl', 'rb') as f:
-        metadata = pickle.load(f)
+# Gets main stats into a csv file for graph creation
+def main_stats_to_csv(G, exclude_dir_conns=True):
+    # Create an empty dataframe
+    stats_df = pd.DataFrame()
+    # Get role homogeneity and arh for all directors
+    rh_all_dirs_dict = get_role_homogeneity_dict(G,exclude_dir_conns)
+    arh_all_dirs_dict = get_avg_role_homogeneity_dict(G, exclude_dir_conns)
+    # Dump all information into dataframe for each director
+    for dir, arh in arh_all_dirs_dict.items():
+        label = G.nodes[dir]['custlabel']
+        top_roles = list(rh_all_dirs_dict[dir].keys())[:3]
+        top_3 = F"{top_roles[0]}, {top_roles[1]}, {top_roles[2]}"
+        dir_info = {"name":dir, "custlabel": label, "arh": arh, "top_3":top_3, "role1":top_roles[0],"role2":top_roles[1], "role3": top_roles[2]}
+        stats_df = stats_df.append(dir_info, ignore_index=True)
+    # Convert dataframe to csv file
+    stats_df.to_csv("main_stats.csv")
+    print("Wrote main_stats.csv..")
 
-    person = "J.J. Abrams"
-    print("Metadata for:", person, "\n")
-    pretty_print_dict(metadata[person])
